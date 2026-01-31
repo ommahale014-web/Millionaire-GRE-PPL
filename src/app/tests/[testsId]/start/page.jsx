@@ -1,83 +1,95 @@
 "use client";
 
-import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useStudentTestStore } from "@/store/studentTestStore";
 export default function StartTestPage() {
-  const { testId } = useParams();
+  const { testsId } = useParams();
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  async function startTest() {
+  const setStudent = useStudentTestStore((s) => s.setStudent);
+const setTest = useStudentTestStore((s) => s.setTest);
+
+
+  const handleStartTest = () => {
     if (!name || !email) {
-      setError("Name and email are required");
+      alert("Please enter your name and email");
       return;
     }
-
-    setLoading(true);
-    setError("");
-
-    const { data, error } = await supabase
-      .from("test_attempts")
-      .insert({
-        test_id: testId,
-        student_name: name,
-        student_email: email,
-        status: "STARTED",
-        started_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    // Redirect student to actual test page
-    router.push(`/test/${testId}?attemptId=${data.id}`);
-  }
+    setStudent(name, email);
+    setTest(testsId);
+    router.push(`/tests/${testsId}/attempt`);
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-xl shadow max-w-md w-full space-y-4">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Start Free Test
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 via-blue-100 to-indigo-100 px-4">
+      <Card className="w-full max-w-md rounded-2xl border border-white/40 bg-white/70 backdrop-blur-xl shadow-xl">
+        
+        {/* Header */}
+        <CardHeader className="text-center space-y-2">
+          <span className="mx-auto w-fit rounded-full bg-blue-100 px-4 py-1 text-xs font-medium text-blue-700">
+            Millionaire GRE · Mock Test
+          </span>
 
-        <input
-          className="input"
-          placeholder="Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+          <CardTitle className="text-3xl font-semibold text-slate-800">
+            Start Test
+          </CardTitle>
 
-        <input
-          className="input"
-          placeholder="Your Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <p className="text-sm text-slate-500">
+            Enter your details to begin the assessment
+          </p>
+        </CardHeader>
 
-        {error && (
-          <p className="text-sm text-red-600">{error}</p>
-        )}
+        {/* Content */}
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <Input
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="h-11 rounded-lg bg-white/90 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500"
+            />
 
-        <button
-          onClick={startTest}
-          disabled={loading}
-          className="btn-blue w-full"
-        >
-          {loading ? "Starting..." : "Start Test"}
-        </button>
-      </div>
+            <Input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-11 rounded-lg bg-white/90 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-xs text-slate-500">
+              Your email is used only for test identification.
+            </p>
+          </div>
+
+          {/* Guidelines */}
+          <div className="rounded-xl bg-white/80 p-4 text-sm text-slate-600 shadow-inner space-y-1">
+            <p>• All questions will be shown on one page</p>
+            <p>• No timer in this version</p>
+            <p>• Do not refresh during the test</p>
+          </div>
+
+          {/* Button */}
+          <Button
+            onClick={handleStartTest}
+            className="h-11 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:opacity-90 transition"
+          >
+            Start Test
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
