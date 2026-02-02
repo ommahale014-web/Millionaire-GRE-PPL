@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { getDashboardStats } from "@/actions/admin_B/dashboard.actions";
+import { handleLogout } from "@/actions/admin_B/auth.actions";
 import {
   Users,
   FileText,
@@ -38,9 +39,19 @@ export default function AdminDashboard() {
     fetchStats();
   }, []);
 
-  const handleLogout = async () => {
+  /* 
+   * Updated to use Server Action for proper cookie clearing 
+   * (Next.js 15/Supabase SSR requirement)
+   */
+  const onLogout = async () => {
+    // 1. Call server action to clear HttpOnly cookies
+    await handleLogout();
+
+    // 2. Clear client-side state just in case
     await supabase.auth.signOut();
-    router.push("/");
+
+    // 3. Force hard redirect to clear client cache
+    window.location.href = "/";
   };
 
   return (
@@ -59,7 +70,7 @@ export default function AdminDashboard() {
         </div>
 
         <button
-          onClick={handleLogout}
+          onClick={onLogout}
           className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-all shadow-sm"
         >
           <LogOut className="w-3.5 h-3.5" />
