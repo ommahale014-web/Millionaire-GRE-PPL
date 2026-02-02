@@ -54,7 +54,7 @@ export default function Sidebar() {
     },
 
     {
-      name: "Test Attempts",
+      name: "Performance Analytics",
       icon: ListChecks,
       href: "/admin/testAttempts",
       match: "/admin/testAttempts",
