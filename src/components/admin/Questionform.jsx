@@ -1,9 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// Removed import { Button } from "@/components/ui/button";  <-- Using custom styled button
+// Removed import { Input } from "@/components/ui/input";    <-- Using custom styled input
+// Removed import { Textarea } from "@/components/ui/textarea"; <-- Using custom styled textarea
+import { Save, CheckCircle2 } from "lucide-react";
+
+/**
+ * Styling helpers to match the Blue/Sky theme
+ */
+const inputClasses = "w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm bg-white hover:border-blue-200";
+const labelClasses = "block text-[10px] font-bold text-slate-700 uppercase tracking-wide mb-1 ml-1";
 
 const EMPTY_FORM = {
   question_text: "",
@@ -12,7 +19,7 @@ const EMPTY_FORM = {
   correct_option: "",
 };
 
-export default function Questionform({ initialData, onSubmit }) {
+export default function Questionform({ initialData, onSubmit, submitLabel = "Save Question" }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,8 +69,10 @@ export default function Questionform({ initialData, onSubmit }) {
       // ✅ Call the server action via parent prop
       await onSubmit(payload);
 
-      // Reset form after success
-      setForm(EMPTY_FORM);
+      // Reset form after success ONLY if it's creating (no initialData)
+      if (!initialData) {
+        setForm(EMPTY_FORM);
+      }
     } catch (err) {
       setError(err.message || "Failed to save question");
     } finally {
@@ -72,12 +81,13 @@ export default function Questionform({ initialData, onSubmit }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl">
+    <form onSubmit={handleSubmit} className="space-y-4">
+
       {/* Section */}
       <div>
-        <label className="block text-sm font-medium mb-1">Section</label>
+        <label className={labelClasses}>Section Type</label>
         <select
-          className="input"
+          className={inputClasses}
           value={form.section_type}
           onChange={(e) => setForm({ ...form, section_type: e.target.value })}
         >
@@ -89,53 +99,76 @@ export default function Questionform({ initialData, onSubmit }) {
 
       {/* Question */}
       <div>
-        <label className="block text-sm font-medium mb-1">Question</label>
-        <Textarea
+        <label className={labelClasses}>Question Text</label>
+        <textarea
+          className={`${inputClasses} min-h-[80px] resize-y`}
           value={form.question_text}
           onChange={(e) => setForm({ ...form, question_text: e.target.value })}
-          placeholder="Enter question text"
+          placeholder="Type your question here..."
           required
         />
       </div>
 
       {/* Options for non-AWA */}
       {form.section_type !== "AWA" && (
-        <>
-          <div className="grid grid-cols-1 gap-3">
+        <div className="space-y-3 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {form.options.map((opt, i) => (
-              <Input
-                key={i}
-                value={opt}
-                placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                onChange={(e) => updateOption(i, e.target.value)}
-              />
+              <div key={i}>
+                <label className={labelClasses}>Option {String.fromCharCode(65 + i)}</label>
+                <input
+                  className={inputClasses}
+                  value={opt}
+                  placeholder={`Option ${String.fromCharCode(65 + i)}...`}
+                  onChange={(e) => updateOption(i, e.target.value)}
+                />
+              </div>
             ))}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Correct Answer</label>
+          <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100 mt-2">
+            <label className={`${labelClasses} text-blue-800`}>Correct Answer</label>
             <select
-              className="input"
+              className={`${inputClasses} bg-white border-blue-200 focus:ring-blue-500`}
               value={form.correct_option}
               onChange={(e) =>
                 setForm({ ...form, correct_option: e.target.value })
               }
             >
-              <option value="">Select correct option</option>
+              <option value="">Select the correct valid option</option>
               {form.options.map(
                 (opt, i) => opt && <option key={i} value={opt}>{opt}</option>
               )}
             </select>
           </div>
-        </>
+        </div>
       )}
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && (
+        <div className="p-2 bg-red-50 text-red-600 text-xs rounded-lg border border-red-200 text-center">
+          {error}
+        </div>
+      )}
 
-      <Button type="submit" disabled={loading}>
-        {loading ? "Saving..." : "Save Question"}
-      </Button>
+      <div className="pt-3 border-t border-slate-100 flex justify-end">
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-bold text-xs disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              Saving...
+            </>
+          ) : (
+            <>
+              <CheckCircle2 size={16} />
+              {submitLabel}
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }
-  

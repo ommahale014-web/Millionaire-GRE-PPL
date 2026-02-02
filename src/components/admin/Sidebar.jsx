@@ -52,14 +52,9 @@ export default function Sidebar() {
       href: "/admin/students",
       match: "/admin/students",
     },
+
     {
-      name: "Categories",
-      icon: FolderOpen,
-      href: "/admin/categories",
-      match: "/admin/categories",
-    },
-    {
-      name: "Test Attempts",
+      name: "Performance Analytics",
       icon: ListChecks,
       href: "/admin/testAttempts",
       match: "/admin/testAttempts",
@@ -68,34 +63,33 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`${
-        sidebarOpen ? "w-64" : "w-20"
-      } bg-white border-r border-gray-200 transition-all duration-300 flex flex-col shadow-xl`}
+      className={`${sidebarOpen ? "w-64" : "w-16"
+        } bg-indigo-50/80 backdrop-blur-md border-r border-indigo-100/50 transition-all duration-300 flex flex-col shadow-lg`}
     >
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           {sidebarOpen && (
-            <h2 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+            <h2 className="text-lg font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
               Millionaire-GRE
             </h2>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
           >
             {sidebarOpen ? (
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-5 h-5 text-gray-500" />
             ) : (
-              <Menu className="w-5 h-5 text-gray-600" />
+              <Menu className="w-5 h-5 text-gray-500" />
             )}
           </button>
         </div>
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 p-4 overflow-y-auto">
-        <ul className="space-y-2">
+      <nav className="flex-1 p-3 overflow-y-auto">
+        <ul className="space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
 
@@ -109,19 +103,17 @@ export default function Sidebar() {
               <li key={item.name}>
                 <button
                   onClick={() => router.push(item.href)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    isActive
-                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/30"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm font-medium border ${isActive
+                    ? "bg-indigo-100 text-blue-700 border-indigo-200 shadow-sm"
+                    : "text-gray-600 border-transparent hover:bg-slate-100 hover:text-slate-900"
+                    }`}
                 >
                   <Icon
-                    className={`w-5 h-5 ${
-                      sidebarOpen ? "" : "mx-auto"
-                    }`}
+                    className={`w-4 h-4 ${isActive ? "text-blue-600" : "text-gray-400"
+                      } ${sidebarOpen ? "" : "mx-auto"}`}
                   />
                   {sidebarOpen && (
-                    <span className="font-medium">
+                    <span>
                       {item.name}
                     </span>
                   )}

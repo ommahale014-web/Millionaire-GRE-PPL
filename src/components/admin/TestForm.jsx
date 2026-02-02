@@ -1,43 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+// Removed Shadcn imports to use custom styling matching the theme
+// import { Input } from "@/components/ui/input";
 
-export default function TestForm({ testId, testTitle, setTestTitle }) {
-  const [loading, setLoading] = useState(false);
+const inputClasses = "w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm bg-white hover:border-blue-200";
 
-  useEffect(() => {
-    if (testId) {
-      // Edit mode → fetch existing test
-      setLoading(true);
-      fetch(`/api/tests/${testId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setTestTitle(data.title);
-          setLoading(false);
-        });
-    }
-  }, [testId, setTestTitle]);
-
-  if (loading) return <p>Loading...</p>;
+export default function TestForm({ testTitle, setTestTitle }) {
+  // Removed internal fetching logic - data should be passed down
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">
+        <label className="block text-[10px] font-bold text-slate-700 uppercase tracking-wide mb-1 ml-1">
           Test Title
         </label>
-        <Input
-          placeholder="Enter test title"
+        <input
+          placeholder="Enter test title (e.g., GRE General Test 1)"
           value={testTitle}
           onChange={(e) => setTestTitle(e.target.value)}
-          className="
-            text-slate-900 
-            placeholder:text-slate-400
-            focus-visible:ring-2 
-            focus-visible:ring-blue-600
-          "
+          className={inputClasses}
         />
       </div>
     </div>

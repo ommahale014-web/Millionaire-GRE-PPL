@@ -61,11 +61,11 @@ export default function TestAttemptPage() {
 
 
   return (
-    <div className="h-screen p-4 bg-gradient-to-br from-sky-100 via-blue-100 to-indigo-100">
+    <div className="h-screen p-3 bg-blue-50/50 overflow-hidden font-sans">
       <div className="max-w-6xl mx-auto h-full flex flex-col">
 
         {/* Section Tabs */}
-        <div className="flex space-x-4 mb-4 flex-shrink-0">
+        <div className="flex space-x-3 mb-3 flex-shrink-0">
           {sections.map((sec) => (
             <button
               key={sec}
@@ -73,7 +73,7 @@ export default function TestAttemptPage() {
                 setSection(sec);
                 setActiveQ(1);
               }}
-              className={`px-6 py-2 rounded-xl font-semibold transition ${section === sec ? "bg-blue-600 text-white shadow-lg" : "bg-white text-gray-700 hover:bg-blue-50"}`}>
+              className={`px-5 py-2 rounded-lg font-semibold text-sm transition-all ${section === sec ? "bg-blue-600 text-white shadow" : "bg-white text-slate-500 hover:bg-blue-50 border border-slate-200"}`}>
               {sec}
             </button>
           ))}
@@ -83,19 +83,16 @@ export default function TestAttemptPage() {
         <div className="flex flex-1 gap-4 overflow-hidden">
 
           {/* LEFT: QUESTION CARD */}
-          <div className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              <h2 className="text-2xl font-semibold mb-2 text-gray-800">
-                Question {activeQ} ({section})
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden relative">
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              <h2 className="text-xl font-bold text-slate-900 mb-2">
+                Question {activeQ} <span className="text-slate-400 text-base font-normal">({section})</span>
               </h2>
-
-              <p className="text-sm text-gray-400 mb-4">Test ID: {testsId}</p>
-
-              <p className="text-gray-700 mb-6 text-lg">
+              <p className="text-slate-800 mb-6 text-base leading-relaxed font-medium">
                 {currentQuestion?.question_text}
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {currentQuestion &&
                   [
                     { key: "A", text: currentQuestion.option_a },
@@ -109,9 +106,18 @@ export default function TestAttemptPage() {
                       <button
                         key={opt.key}
                         onClick={() => selectOption(opt.key)}
-                        className={`w-full flex items-center justify-between rounded-xl px-6 py-3 font-medium transition-all duration-200 border border-gray-200 ${selected ? "bg-gradient-to-r from-green-100 to-green-200 text-gray-800 shadow-inner" : "bg-white hover:bg-indigo-50"}`}>
-                        <span>{opt.text}</span>
-                        {selected && <Check className="w-5 h-5 text-green-600" />}
+                        className={`w-full flex items-center justify-between rounded-lg px-4 py-3 text-left transition-all duration-200 border group text-sm
+                        ${selected
+                            ? "bg-blue-50 border-blue-500 text-blue-700 shadow-sm"
+                            : "bg-white border-slate-200 hover:border-blue-300 hover:bg-slate-50 text-slate-600"
+                          }`}>
+                        <div className="flex items-center gap-3">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border flex-shrink-0 ${selected ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-400 border-slate-200 group-hover:border-blue-400 group-hover:text-blue-500"}`}>
+                            {opt.key}
+                          </span>
+                          <span className="font-medium">{opt.text}</span>
+                        </div>
+                        {selected && <Check className="w-4 h-4 text-blue-600" />}
                       </button>
                     );
                   })}
@@ -120,11 +126,11 @@ export default function TestAttemptPage() {
             </div>
 
             {/* Navigation */}
-            <div className="flex justify-between mt-4 flex-shrink-0">
+            <div className="flex justify-between mt-4 pt-4 border-t border-slate-100 flex-shrink-0">
               <button
                 disabled={activeQ === 1}
                 onClick={() => setActiveQ(activeQ - 1)}
-                className="px-5 py-2 bg-gray-200 rounded-lg font-medium text-gray-700 disabled:opacity-50 hover:bg-gray-200 transition"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-lg font-medium text-sm text-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 hover:border-slate-300 transition-all"
               >
                 Previous
               </button>
@@ -132,14 +138,14 @@ export default function TestAttemptPage() {
               {section === "QUANT" && activeQ === filteredQuestions.length ? (
                 <button
                   onClick={handleSubmit}
-                  className="px-5 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition"
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-bold text-sm shadow hover:bg-green-700 transition-all"
                 >
                   Submit Test
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold text-sm shadow hover:bg-blue-700 transition-all"
                 >
                   Next
                 </button>
@@ -150,53 +156,57 @@ export default function TestAttemptPage() {
           </div>
 
           {/* RIGHT: QUESTION NAV + STATUS PANEL */}
-          <div className="flex-shrink-0 w-72 flex flex-col gap-4 h-full">
+          <div className="flex-shrink-0 w-64 flex flex-col gap-4 h-full">
 
             {/* QUESTION NAV */}
-            <div className="bg-white rounded-3xl p-4 shadow-lg grid grid-cols-4 gap-3 flex-shrink-0 overflow-y-auto">
-              {filteredQuestions.map((q, idx) => {
-                const attempted = answers[q.id];
-                const isActive = activeQ === idx + 1;
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex flex-col flex-1 overflow-hidden">
+              <div className="grid grid-cols-4 gap-2 overflow-y-auto pr-1 custom-scrollbar content-start">
+                {filteredQuestions.map((q, idx) => {
+                  const attempted = answers[q.id];
+                  const isActive = activeQ === idx + 1;
 
-                return (
-                  <button
-                    key={q.id}
-                    onClick={() => setActiveQ(idx + 1)}
-                    className={`
-                    w-12 h-12 flex items-center justify-center rounded-full font-semibold transition-all duration-200
+                  return (
+                    <button
+                      key={q.id}
+                      onClick={() => setActiveQ(idx + 1)}
+                      className={`
+                    w-9 h-9 flex items-center justify-center rounded-md font-bold transition-all duration-200 text-xs
                     ${isActive
-                        ? "bg-blue-100 border-2 border-blue-400 shadow-inner scale-110 text-blue-700"
-                        : attempted
-                          ? "bg-green-300 text-green-700 hover:bg-green-400"
-                          : "bg-gray-200 hover:bg-gray-300 text-gray-600"
-                      }
+                          ? "bg-blue-600 text-white shadow ring-2 ring-blue-200"
+                          : attempted
+                            ? "bg-blue-100 text-blue-700 border border-blue-200"
+                            : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-slate-100"
+                        }
                   `}
-                  >
-                    {idx + 1}
-                  </button>
-                );
-              })}
+                    >
+                      {idx + 1}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* STATUS PANEL */}
-            <div className="bg-white rounded-2xl p-4 shadow-md text-sm flex flex-col space-y-2 flex-shrink-0">
-              <p className="font-semibold mb-2 text-gray-700">
-                Legend / Status
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-xs flex-shrink-0">
+              <p className="font-bold mb-3 text-slate-700 border-b border-slate-100 pb-2">
+                Legend
               </p>
 
-              <div className="flex items-center space-x-2">
-                <span className="w-4 h-4 rounded-full bg-green-300 border border-green-400"></span>
-                <span>Answered</span>
-              </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded bg-blue-100 border border-blue-200"></span>
+                  <span className="text-slate-600">Answered</span>
+                </div>
 
-              <div className="flex items-center space-x-2">
-                <span className="w-4 h-4 rounded-full bg-gray-100 border border-gray-300"></span>
-                <span>Unanswered</span>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded bg-blue-600"></span>
+                  <span className="text-slate-600">Current</span>
+                </div>
 
-              <div className="flex items-center space-x-2">
-                <span className="w-4 h-4 rounded-full bg-blue-100 border border-blue-400"></span>
-                <span>Current</span>
+                <div className="flex items-center space-x-2">
+                  <span className="w-3 h-3 rounded bg-slate-50 border border-slate-200"></span>
+                  <span className="text-slate-600">Unanswered</span>
+                </div>
               </div>
             </div>
           </div>
@@ -204,5 +214,4 @@ export default function TestAttemptPage() {
       </div>
     </div>
   );
-
 }
