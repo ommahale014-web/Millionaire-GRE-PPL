@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
 import { useStudentTestStore } from "@/store/studentTestStore";
 import { getAttemptInfo, registerTestAttempt } from "@/actions/student/test.actions";
 
