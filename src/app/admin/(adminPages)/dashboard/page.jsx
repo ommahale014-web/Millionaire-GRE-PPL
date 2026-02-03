@@ -185,7 +185,7 @@ export default function AdminDashboard() {
                 </button>
 
                 <button
-                  onClick={() => router.push('/admin/student')}
+                  onClick={() => router.push('/admin/students')}
                   className="w-full flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group text-left"
                 >
                   <span className="text-xs font-semibold text-slate-700">View Students</span>
